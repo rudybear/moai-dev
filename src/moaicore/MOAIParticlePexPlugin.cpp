@@ -115,12 +115,27 @@ int MOAIParticlePexPlugin::_load( lua_State* L ){
 	
 	if ( MOAILogMessages::CheckFileExists ( xml, L )) {
 		TiXmlDocument doc;
-		doc.LoadFile ( xml );
-		MOAIParticlePexPlugin *particle = new MOAIParticlePexPlugin();
-		MOAIParticlePexPlugin::Parse ( *particle, doc.RootElement ());
-		particle->mParticlePath = xml;
-		particle->PushLuaUserdata( state );
-		return 1;
+		STLString str = USFileSys::GetAbsoluteFilePath(xml);
+
+		zl_stat stat;
+		USFileSys::GetFileStat(xml, stat);
+
+		char* buf = new char[stat.mSize];
+		FILE * f = fopen(str.c_str(), "rb");
+		fread(buf, 1, stat.mSize, f);
+		fclose(f);
+
+		if (doc.Parse(buf))//doc.LoadFile ( str.c_str() ))
+		{
+			MOAIParticlePexPlugin *particle = new MOAIParticlePexPlugin();
+			MOAIParticlePexPlugin::Parse ( *particle, doc.RootElement ());
+			particle->mParticlePath = xml;
+			particle->PushLuaUserdata( state );
+			return 1;
+		}
+
+		delete [] buf;
+
 	}
 	
 	return 0;

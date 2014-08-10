@@ -470,7 +470,7 @@ string ZLFileSystem::NormalizeFilePath ( const char* path ) {
 	string buffer = BlessPath ( path );
 
 	// normalize the path
-	for ( ; buffer [ i ]; ++i ) {
+	for ( ; i < buffer.length() ; ++i ) {
 		
 		if ( buffer [ i ] == '.' ) {
 		
@@ -511,7 +511,7 @@ string ZLFileSystem::NormalizeFilePath ( const char* path ) {
 		buffer [ top++ ] = buffer [ i ];
 	}
 	
-	buffer [ top ] = 0;
+	//buffer [ top ] = 0;
 	string result = buffer.c_str ();
 	return result;
 }
